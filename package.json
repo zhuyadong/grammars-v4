@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "antlr4": "^4.7.0",
+    "commander": "^2.11.0"
+  }
+}
