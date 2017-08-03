@@ -1,7 +1,11 @@
-const {ExprParser} = require( './ExprParser.js');
-const {ExprLexer} = require('./ExprLexer.js');
+const {ExprParser} = require( './ExprParser');
+const {ExprLexer} = require('./ExprLexer');
+const {ExprListener} = require('./ExprListener');
+const {ExprVisitor} = require('./ExprVisitor');
 const {CommonTokenStream, FileStream} = require('antlr4');
 const program = require('commander');
+const antlr = require('antlr4');
+const {inspect} = require('util');
 
 program
     .version('0.1.0')
@@ -17,4 +21,30 @@ const tokens = new CommonTokenStream(lexer);
 const parser = new ExprParser(tokens);
 
 let tree = parser.prog();
-console.log(tree.toStringTree());
+//console.log(tree.toStringTree());
+
+class TestExprListener extends ExprListener {
+    enterProg(ctx) {
+        console.log('enterProg');
+    }
+
+    enterAssign(ctx) {
+        console.log('enterAssign');
+    }
+}
+
+class TestExprVisitor extends ExprVisitor {
+    visitAssign(ctx) {
+        super.visitAssign(ctx);
+    }
+    visitInt(ctx) {
+        console.log(ctx.INT().getText());
+    }
+}
+
+let walker = new antlr.tree.ParseTreeWalker();
+let listener = new TestExprListener();
+let visitor = new TestExprVisitor();
+
+//walker.walk(listener, tree);
+visitor.visit(tree);
